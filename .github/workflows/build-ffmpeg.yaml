@@ -85,9 +85,17 @@ jobs:
       - name: Get current date & time before build
         id: date-time-before
         run: echo date-time=$(date +'%Y-%m-%d %H:%M') >> $GITHUB_OUTPUT
-        
+
+      - name: add new patch file (add avs/dra)
+        run: |
+          # https://github.com/rdp/ffmpeg-windows-build-helpers/issues/583
+          git clone -b n7.1.2 --depth 1 https://github.com/FFmpeg/FFmpeg.git ffmpeg-source
+          cd ffmpeg-source
+          wget https://raw.githubusercontent.com/maliwen2015/ffmpeg_cavs_dra/refs/heads/main/ffmpeg-7.1.2_cavs_dra.patch
+          git apply ffmpeg-7.1.2_cavs_dra.patch
+
       - name: Compile FFmpeg ${{ needs.check.outputs.version }} using ffmpeg-windows-build-helpers ${{ needs.check.outputs.helper-git-sha-short }}
-        run: ./cross_compile_ffmpeg.sh --ffmpeg-git-checkout-version=n${{ needs.check.outputs.version }} --gcc-cpu-count=$(nproc) --disable-nonfree=n --sandbox-ok=y --compiler-flavors=${{ matrix.os }}
+        run: ./cross_compile_ffmpeg.sh --ffmpeg-source-dir=ffmpeg-source --ffmpeg-git-checkout-version=n${{ needs.check.outputs.version }} --gcc-cpu-count=$(nproc) --disable-nonfree=n --sandbox-ok=y --compiler-flavors=${{ matrix.os }}
         
       - name: Get current date & time after build
         id: date-time-after
