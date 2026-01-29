@@ -27,10 +27,10 @@ jobs:
           version=7.1.2
           echo version=$version >> $GITHUB_OUTPUT
           
-      - name: Get ${{ vars.FWBH_REPOSITORY_OWNER }}/ffmpeg-windows-build-helpers latest commit
+      - name: Get rdp/ffmpeg-windows-build-helpers latest commit
         id: ffmpeg-helper-info
         run: |
-          git_owner=${{ vars.FWBH_REPOSITORY_OWNER }}
+          git_owner=rdp
           git_sha=$(gh api repos/$git_owner/ffmpeg-windows-build-helpers/commits/master -q .sha)
           echo git-owner=$git_owner >> $GITHUB_OUTPUT
           echo git-sha=$git_sha >> $GITHUB_OUTPUT
