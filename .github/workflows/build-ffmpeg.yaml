@@ -93,7 +93,9 @@ jobs:
           cd ffmpeg-source
           curl -O https://raw.githubusercontent.com/maliwen2015/ffmpeg_cavs_dra/refs/heads/main/ffmpeg-7.1.2_cavs_dra.patch
           ls
-          git apply ffmpeg-7.1.2_cavs_dra.patch
+          # fix bug
+          sed -i 's/18562/18555/' ffmpeg-7.1.2_cavs_dra.patch
+          patch -p2 < ffmpeg-7.1.2_cavs_dra.patch
 
       - name: Compile FFmpeg ${{ needs.check.outputs.version }} using ffmpeg-windows-build-helpers ${{ needs.check.outputs.helper-git-sha-short }}
         run: ./cross_compile_ffmpeg.sh --ffmpeg-source-dir=ffmpeg-source --ffmpeg-git-checkout-version=n${{ needs.check.outputs.version }} --gcc-cpu-count=$(nproc) --disable-nonfree=n --sandbox-ok=y --compiler-flavors=${{ matrix.os }}
