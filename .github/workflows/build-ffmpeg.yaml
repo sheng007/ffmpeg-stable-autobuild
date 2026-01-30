@@ -11,6 +11,7 @@ on:
     types: [started]
 
 env:
+  FFMPEG_INFO: 7.1.2
   FFMPEG_VER: n7.1.2
 
 concurrency:
@@ -24,7 +25,7 @@ jobs:
         id: ffmpeg-info
         run: |
           # version=$(curl -s https://endoflife.date/api/ffmpeg.json | jq -r .[0].latest)
-          version=7.1.2
+          version=$FFMPEG_INFO
           echo version=$version >> $GITHUB_OUTPUT
           
       - name: Get rdp/ffmpeg-windows-build-helpers latest commit
