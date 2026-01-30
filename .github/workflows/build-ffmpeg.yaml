@@ -4,9 +4,6 @@ on:
     - cron: '7 11 * * 0'
   workflow_dispatch:
     inputs:
-      force_build:
-        description: Disable checking for newer commit
-        type: boolean
       no_release:
         description: Don't create release
         type: boolean
@@ -46,13 +43,7 @@ jobs:
           echo helper-git-sha=${tag_name:17:7} >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          
-      - name: Check if there is newer version or commit
-        if: '! inputs.force_build'
-        run: >
-          [[ "${{ steps.ffmpeg-info.outputs.version }}" != "${{ steps.ffmpeg-autobuild-info.outputs.version }}" ]] ||
-          [[ "${{ steps.ffmpeg-helper-info.outputs.git-sha-short }}" != "${{ steps.ffmpeg-autobuild-info.outputs.helper-git-sha }}" ]]
-          
+
     outputs:
       version: ${{ steps.ffmpeg-info.outputs.version }}
       helper-git-owner: ${{ steps.ffmpeg-helper-info.outputs.git-owner }}
