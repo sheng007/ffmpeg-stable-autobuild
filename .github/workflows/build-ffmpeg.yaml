@@ -1,7 +1,7 @@
 name: Build FFmpeg stable
+
 on:
-  schedule:
-    - cron: '7 11 * * 0'
+  repository_dispatch:
   workflow_dispatch:
     inputs:
       no_release:
@@ -9,7 +9,10 @@ on:
         type: boolean
   watch:
     types: [started]
-    
+
+env:
+  FFMPEG_VER: n7.1.2
+
 concurrency:
   group: ${{ github.workflow }}
   
@@ -80,12 +83,13 @@ jobs:
       - name: add new patch file (add avs/dra)
         run: |
           # https://github.com/rdp/ffmpeg-windows-build-helpers/issues/583
-          git clone -b n7.1.2 --depth 1 https://github.com/FFmpeg/FFmpeg.git ffmpeg-source
+          git clone -b $FFMPEG_VER --depth 1 https://github.com/FFmpeg/FFmpeg.git ffmpeg-source
           cd ffmpeg-source
           curl -O https://raw.githubusercontent.com/maliwen2015/ffmpeg_cavs_dra/refs/heads/main/ffmpeg-7.1.2_cavs_dra.patch
           ls
           # fix bug
           sed -i 's/18562/18555/' ffmpeg-7.1.2_cavs_dra.patch
+          #
           patch -p2 < ffmpeg-7.1.2_cavs_dra.patch
 
       - name: Compile FFmpeg ${{ needs.check.outputs.version }} using ffmpeg-windows-build-helpers ${{ needs.check.outputs.helper-git-sha-short }}
